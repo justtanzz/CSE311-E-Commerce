@@ -74,13 +74,15 @@
                 <th>Description</th>
                 <th>Action</th>
             </tr>
-            <?php
-            include("connection.php");
-            session_start();
+        <?php
+        session_start();
+        include("connection.php");
+        mysqli_select_db($conn, 'ecommerce');
 
-            // Get the products from the database
-            $query = "SELECT * FROM product";
-            $result = mysqli_query($conn, $query);
+        // Get the products from the database
+        $query = "SELECT * FROM product";
+        $result = $conn->query($query);
+        
 
             while ($row = mysqli_fetch_assoc($result)) {
                 // Get the product details
@@ -88,6 +90,14 @@
                 $name = $row["Pname"];
                 $price = $row["Price"];
                 $description = $row["Dsc"];
+                $rand = rand(1,100);
+                $qty = 1;
+                $tprice = $price*$qty;
+                $sql = "INSERT INTO Cart(CartID, CustomerID, ProductName, Price, Quantity, TotalPrice) VALUES
+                        ('{$rand}', '{$_SESSION['cid']}', '{$PID}', '{$price}', '{$qty}', '$tprice')";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+
 
                 // Display the product details in a table row
                 echo "<tr>";
@@ -95,7 +105,7 @@
                 echo "<td>$price</td>";
                 echo "<td>$description</td>";
                 // Display a button to add the product to the cart
-                echo "<td><form action='add_to_cart.php' method='post'>";
+                echo "<td><form action='Cart.php' method='post'>";
                 echo "<input type='hidden' name='id' value='$PID'>";
                 echo "<input class='add-to-cart-btn' type='submit' name='add' value='Add to Cart'>";
                 echo "</form></td>";
