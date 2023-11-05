@@ -1,8 +1,14 @@
 <?php
-	session_start();
-	$db=mysqli_connect('localhost', 'root', '', 'ecommerce');
-	if(!$db)
-	{
-		die('check your connection'.mysqli_error());
-	}
+$servername = "localhost";
+$username = "root";
+$password = "";
+$db = "project311";
+// Create connection
+$conn = mysqli_connect($servername, $username, $password, $db);
+
+// Check connection
+if (!$conn) {
+  die("Connection failed: " . mysqli_connect_error());
+}
+#echo "Connected successfully";
 ?>
