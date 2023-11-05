@@ -1,12 +1,10 @@
 <?php
+include("connection.php");
 session_start();
-// Connect to the database
-include "connection.php";
-include "login.php";
 
 // Get the products from the database
 $query = "SELECT * FROM product";
-$result = mysqli_query($db, $query);
+$result = mysqli_query($conn, $query);
 
 // Display the products in a table
 echo "<table>";
