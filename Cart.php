@@ -3,56 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+    <title>Cart Products</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #333;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: #f7f7f7;
         }
 
-        .cart-container {
-            background-color: #444;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        .container {
+            width: 80%;
+            margin: 0 auto;
             padding: 20px;
         }
 
-        .cart-item {
-            margin-bottom: 15px;
+        .product {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .product img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="cart-container">
-        <h1>Shopping Cart</h1>
+    <div class="container">
+        <h1>Your Cart</h1>
         <?php
+        include("connection.php");
         session_start();
 
-        if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) {
-            foreach ($_SESSION['cart'] as $item) {
-                $name = $item['name'];
-                $price = $item['price'];
-                $description = $item['description'];
-                $image = $item['image'];
+        // Get cart items with product details from the database
+        $query = "SELECT cart.CartID, cart.PID, cart.Quantity, cart.TotalPrice, product.Pname, product.Price, product.ImageURL FROM cart INNER JOIN product ON cart.PID = product.PID";
+        $result = mysqli_query($conn, $query);
 
-                echo "<div class='cart-item'>";
-                echo "<img src='$image' alt='$name' style='width: 50px; height: 50px; object-fit: cover; border-radius: 5px; margin-right: 10px;'>";
-                echo "<strong>$name</strong> - $$price<br>";
-                echo "<em>$description</em>";
-                echo "</div>";
-            }
-        } else {
-            echo "<p>Your cart is empty.</p>";
+        while ($row = mysqli_fetch_assoc($result)) {
+            $productName = $row["Pname"];
+            $productPrice = $row["Price"];
+            $productQuantity = $row["Quantity"];
+            $totalPrice = $row["TotalPrice"];
+            $productImage = $row["ImageURL"];
+
+            echo "<div class='product'>";
+            echo "<img src='$productImage' alt='$productName'>";
+            echo "<strong>$productName</strong><br>";
+            echo "Price: $$productPrice<br>";
+            echo "Quantity: $productQuantity<br>";
+            echo "Total Price: $$totalPrice<br>";
+            echo "</div>";
         }
         ?>
-        <a href="product_listing.php" style="color: #4caf50; text-decoration: none;">Continue Shopping</a>
     </div>
 </body>
 </html>
+
