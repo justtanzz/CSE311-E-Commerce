@@ -1,4 +1,5 @@
 <?php
+session_start();
 include("connection.php");
 if(isset($_POST['submit-btn'])) {
 
@@ -13,6 +14,7 @@ if(isset($_POST['submit-btn'])) {
 
     $select_user = mysqli_query($conn, $query) or die('query failed');
 
+
     if(mysqli_num_rows($select_user)>0) {
         $row = mysqli_fetch_assoc($select_user);
         $_SESSION['cid'] = $row['CustomerID'];
@@ -24,9 +26,10 @@ if(isset($_POST['submit-btn'])) {
         header('location:home.php');
     }
     else {
+		$_SESSION['cid'] = 0;
         $message[] = 'incorrect email or password';
     }
-
+	session_commit();
 }
 ?>
 
