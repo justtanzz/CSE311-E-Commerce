@@ -1,67 +1,79 @@
 <?php
-    include 'connection.php';
+include("connection.php");
+if(isset($_POST['submit-btn'])) {
+
+    $filter_email = filter_var($_POST['email']);
+    $email = mysqli_real_escape_string($conn, $filter_email);
+
+    $filter_password = filter_var($_POST['password']);
+    $password = mysqli_real_escape_string($conn, $filter_password);
+
+
+    $query = "SELECT * FROM customer WHERE Email = '$email' and Password = '$password'";
+
+    $select_user = mysqli_query($conn, $query) or die('query failed');
+
+    if(mysqli_num_rows($select_user)>0) {
+        $row = mysqli_fetch_assoc($select_user);
+        $_SESSION['cid'] = $row['CustomerID'];
+        $_SESSION['fname'] = $row['F_name'];
+        $_SESSION['lname'] = $row['L_name'];
+        $_SESSION['dob'] = $row['DOB'];
+        $_SESSION['email'] = $row['Email'];
+        $_SESSION['phone'] = $row['PhnNo'];
+        header('location:home.php');
+    }
+    else {
+        $message[] = 'incorrect email or password';
+    }
+
+}
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-	<title> Login </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" rel="stylesheet">
 </head>
+
 <body>
-	<div class="header">
-		<h1> Login </h1>
-		
-	</div> 
-	<?php
-	    if(@$_GET['Empty']==true){
-	 ?>
-	    <div class="alert-light text-danger"><?php echo $_GET['Empty']?></div>
-	<?php
-	    }
-	?>
-	<?php
-	    if(@$_GET['Invalid']==true){
-	 ?>
-	    <div class="alert-light text-danger"><?php echo $_GET['Invalid']?></div>
-	<?php
-	    }
-	?>
-	<form action="login.php" method="post">
-		<table>
-			<tr>
-				<td> Email</td>
-				<td><input type="text" name="Email"></td>
-			</tr>
-			<tr>
-				<td> Password</td>
-				<td><input type="password" name="Password"></td>
-			</tr>
-			<tr>
-				<td><button class="btn btn-success" name="Login"> Login</button></td>
-			</tr>
-		</table>
-	</form>
-	<?php
-		if(isset($_POST['Login']))
-		{
-			if(empty($_POST['Email'])||empty($_POST['Password'])){
-				 echo"Please enter proper login credentials";
-			 }
-			else{
-				$query="select * from Customer where Email ='".$_POST['Email']."' and Password='".$_POST['Password']."' ";
-				$result=mysqli_query($con, $query);
-				if(mysqli_fetch_assoc($result)){
-					$_SESSION['user']=$_POST['Email'];
-					header("location: home.php");
-					exit();
-				}
-				else{
-					header("location:login.php?Invalid=Invalid username or password.");
-				}
-			
-			} 
-		}
-	?>
+    <div class="login-box">
+        <h2>E-commerce Database Login Page</h2>
+        <?php
+            if(isset($message)) {
+                foreach($message as $message) {
+                    echo '
+                    <div class="message" style="
+                        text-align: center;
+                        font-size: 15px;
+                        text-transform: capitalize;
+                    ">
+                            <span> '.$message.' </span>
+                            <span class="icon" onclick="this.parentElement.remove()"> <i class="fa-regular fa-circle-xmark"></i> </span>
+                        </div>
+                    ';
+                }
+            }
+
+        ?>
+        <form action="login.php" method="post">
+            <div class="textbox">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="textbox">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <input type="submit" name="submit-btn"  class="btn" value="Login">
+        </form>
+    </div>
+</body>
+
+</html>
 
 </body>
 </html>
