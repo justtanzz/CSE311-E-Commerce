@@ -84,7 +84,7 @@
         $result = $conn->query($query);
         
 
-            while ($row = mysqli_fetch_assoc($result)) {
+           while ($row = mysqli_fetch_assoc($result)) {
                 // Get the product details
                 $PID = $row["PID"];
                 $name = $row["Pname"];
@@ -93,8 +93,8 @@
                 $rand = rand(1,100);
                 $qty = 1;
                 $tprice = $price*$qty;
-                $sql = "INSERT INTO Cart(CartID, CustomerID, ProductName, Price, Quantity, TotalPrice) VALUES
-                        ('{$rand}', '{$_SESSION['cid']}', '{$PID}', '{$price}', '{$qty}', '$tprice')";
+                $sql = "INSERT INTO Cart(CartID, CustomerID, Price, Quantity, TotalPrice, PID) VALUES
+                        ('{$rand}', '{$_SESSION['cid']}', '{$PID}', '{$price}', '{$qty}', '{$tprice}', '{$PID}')";
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
 
